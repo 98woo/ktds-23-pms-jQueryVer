@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ktdsuniversity.edu.pms.survey.dao.SurveyQuestionPickDao">
+	
+	<resultMap type="com.ktdsuniversity.edu.pms.survey.vo.SurveyQuestionPickVO"
+			   id="SurveyQuestionPickVoMap"
+			   autoMapping="true">
+		<id column="SQP_ID" property="sqpId" />
+		<association property="surveyQuestionVO"
+					 javaType="com.ktdsuniversity.edu.pms.survey.vo.SurveyQuestionVO">
+			<id column="SRV_ID" property="srvId" />
+		</association>
+	</resultMap>
+	
+	<insert id="createNewAnswer" 
+			parameterType="com.ktdsuniversity.edu.pms.survey.vo.SurveyQuestionPickVO">
+		
+		<selectKey keyProperty="sqpId" order="BEFORE" resultType="string">
+			SELECT 'SRV_QST_P_' || TO_CHAR(SYSDATE, 'YYMMDD') || '_' || LPAD(SEQ_SURVEY_QUESTION_PICK_PK.NEXTVAL, 6, '0')
+			  FROM DUAL
+		</selectKey>
+		
+		INSERT INTO SURVEY_QUESTION_PICK
+		 (SQP_ID
+		, SRV_ID
+		, SQP_CNTNT
+		, NEXT_ID
+		, CRTR_ID
+		, CRT_DT
+		, MDFR_ID
+		, MDF_DT
+		, DEL_YN
+		, SEQ)
+		VALUES
+		 (#{sqpId}
+		, #{srvId}
+		, #{sqpCntnt}
+		, #{nextId}
+		, #{crtrId}
+		, SYSDATE
+		, NULL
+		, NULL
+		, 'N'
+		, #{seq})
+	</insert>
+	
+	<select id="getOneAnswer" parameterType="String" resultMap="SurveyQuestionPickVoMap">
+		SELECT SQP_ID
+			 , SRV_ID
+			 , SQP_CNTNT
+			 , NEXT_ID
+			 , CRTR_ID
+			 , CRT_DT
+			 , MDFR_ID
+			 , MDF_DT
+			 , DEL_YN
+			 , SEQ
+		  FROM SURVEY_QUESTION_PICK
+		 WHERE DEL_YN = 'N'
+		   AND SQP_ID = #{_parameter}
+		 ORDER BY SEQ ASC
+	</select>
+	
+	<update id="modifyOneAnswer" parameterType="com.ktdsuniversity.edu.pms.survey.vo.SurveyQuestionPickVO">
+		UPDATE SURVEY_QUESTION_PICK
+		   SET SQP_CNTNT = #{sqpCntnt}
+		     , NEXT_ID = #{nextId}
+		     , MDFR_ID = #{mdfrId}
+		     , MDF_DT = SYSDATE
+		 WHERE SQP_ID = #{sqpId}
+	</update>
+	
+	<select id="getOneAnswerSequence" parameterType="String" resultMap="SurveyQuestionPickVoMap">
+		SELECT SEQ
+		  FROM SURVEY_QUESTION_PICK
+		 WHERE DEL_YN = 'N'
+		   AND SQP_ID = #{_parameter}
+		 ORDER BY SEQ ASC
+	</select>
+	
+	<update id="modifyOneAnswerSequence" parameterType="com.ktdsuniversity.edu.pms.survey.vo.SurveyQuestionPickVO">
+		UPDATE SURVEY_QUESTION_PICK
+		   SET SEQ = #{seq}
+		 WHERE SQP_ID = #{sqpId}
+	</update>
+	
+	<select id="getAllPicks" parameterType="com.ktdsuniversity.edu.pms.survey.vo.SurveyQuestionPickVO"
+			resultMap="SurveyQuestionPickVoMap">
+		SELECT SQP_ID
+			 , SRV_ID
+			 , SQP_CNTNT
+			 , NEXT_ID
+			 , CRTR_ID
+			 , CRT_DT
+			 , MDFR_ID
+			 , MDF_DT
+			 , DEL_YN
+			 , SEQ
+		  FROM SURVEY_QUESTION_PICK
+		 WHERE DEL_YN = 'N'
+		   AND SRV_ID = #{srvId}
+		 ORDER BY SEQ ASC
+	</select>
+	
+	<update id="deleteOneAnswer" parameterType="com.ktdsuniversity.edu.pms.survey.vo.SurveyQuestionPickVO">
+		UPDATE SURVEY_QUESTION_PICK
+		   SET MDFR_ID = #{mdfrId}
+		     , MDF_DT = SYSDATE
+		     , DEL_YN = 'Y'
+		 WHERE SQP_ID = #{sqpId}
+	</update>
+</mapper>
