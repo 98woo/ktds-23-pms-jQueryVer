@@ -1,10 +1,10 @@
 spring:
   application.name: pms
   datasource:
-    url: jdbc:oracle:thin:@mcjang.iptime.org:1521:XE
+    url: jdbc:oracle:thin:@localhost:1521:XE
     driver-class-name: oracle.jdbc.driver.OracleDriver
-    username: PMS
-    password: PMS
+    username: ktds_pms
+    password: 1234
   servlet:
     # 파일 업로드 설정
     multipart:
@@ -22,7 +22,7 @@ app:
   tempsession:
     empId: system01
     empName: 관리자
-    enable: false
+    enable: true
   authentication:
     check-url-pattern: /**
     ignore-url-patterns: /js/**,
